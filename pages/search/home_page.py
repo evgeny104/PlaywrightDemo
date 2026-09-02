@@ -32,9 +32,11 @@ class HomePage(BasePage):
                 self.page.keyboard.press("Enter")
         else:
             with allure.step("Ждём результаты и выбираем из дропдауна"):
-                expect(
-                    self.page.locator("header form div.list a.item").filter(has_text=query.upper()).first
-                ).to_be_visible(timeout=10000)
+                self._expect_visible(
+                    self.page.locator("header form div.list a.item").filter(has_text=query.upper()).first,
+                    description=f"дропдаун с результатами для «{query.upper()}»",
+                    timeout=10000,
+                )
                 self.first_dropdown_item.click()
 
     @allure.step("Открываем первый результат поиска: {query}")
@@ -43,4 +45,7 @@ class HomePage(BasePage):
             self.first_result.evaluate("el => el.removeAttribute('target')")
             self.first_result.click()
         with allure.step(f"Проверяем заголовок содержит '{query}'"):
-            expect(self.page).to_have_title(re.compile(query, re.IGNORECASE))
+            self._expect_page_title(
+                re.compile(query, re.IGNORECASE),
+                description=query,
+            )

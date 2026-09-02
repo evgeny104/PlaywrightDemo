@@ -6,6 +6,7 @@ from data.nvda.statement_years import EXPECTED_YEARS
 
 class NvdaStatementPage(NvdaBasePage):
     URL = f"{NvdaBasePage.BASE_URL}/statement"
+    _URL_PATTERN = r"/nasdaq/nvda/statement"
 
     # Locators
 
@@ -27,16 +28,22 @@ class NvdaStatementPage(NvdaBasePage):
         with allure.step("URL содержит /nasdaq/nvda/statement"):
             if msg := self._assert_url():
                 raise AssertionError(msg)
-        with allure.step("Таблица с финансовыми данными видна"):
-            try:
-                expect(self.header_row).to_be_visible()
-            except AssertionError:
-                raise AssertionError("Таблица с годами не найдена на странице Statement")
+        with allure.step("Строка-заголовок таблицы видна"):
+            self._expect_visible(
+                self.header_row,
+                description="строка-заголовок таблицы Statement (span.row.header)",
+            )
 
     @allure.step("Проверяем годовые колонки в таблице")
     def check_years(self) -> None:
         for i, year in enumerate(EXPECTED_YEARS):
             with allure.step(f"{year}"):
-                expect(self.year_cell(i)).to_have_text(year)
+                self._expect_text(
+                    self.year_cell(i), year,
+                    description=f"колонка с индексом {i}",
+                )
         with allure.step("TTM"):
-            expect(self.ttm_cell).to_have_text("TTM")
+            self._expect_text(
+                self.ttm_cell, "TTM",
+                description="последняя колонка TTM",
+            )
