@@ -14,7 +14,7 @@ def test_search_opens_with_slash_key(home: HomePage):
     expect(home.search_input).to_be_focused()
 
 
-@allure.title("При вводе тикера появляется дропдаун")
+@allure.title("Вводе тикера появляется дропдаун")
 def test_search_dropdown_appears(home: HomePage):
     home.search_input.fill("alp")
     expect(home.first_dropdown_item).to_be_visible()
