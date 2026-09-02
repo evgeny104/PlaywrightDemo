@@ -26,6 +26,7 @@ htmlcov/
 *.swo
 *~
 
+
 # OS
 .DS_Store
 Thumbs.db
@@ -53,8 +54,9 @@ dist/
 build/
 *.egg-info/
 
-# File
+# Claude Code
 CLAUDE.md
+.claude/
 
 # Allure / coverage reports (generated)
 allure-results/
