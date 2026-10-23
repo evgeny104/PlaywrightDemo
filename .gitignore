@@ -54,9 +54,10 @@ dist/
 build/
 *.egg-info/
 
-# Claude Code
-CLAUDE.md
-.claude/
+# Claude Code — публикуем CLAUDE.md, agents и commands как часть демо;
+# прячем только локальные настройки и память.
+.claude/settings.local.json
+.claude/memory/
 
 # Allure / coverage reports (generated)
 allure-results/
