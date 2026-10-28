@@ -9,7 +9,9 @@ from screenshot_store import _pages
 @pytest.fixture
 def aapl_overview(page: Page, request) -> AaplSymbolPage:
     _pages[request.node.nodeid] = page
-    with allure.step("Открываем вкладку Overview AAPL"):
-        page.goto(AaplSymbolPage.URL)
-    yield AaplSymbolPage(page)
-    _pages.pop(request.node.nodeid, None)
+    try:
+        with allure.step("Открываем вкладку Overview AAPL"):
+            page.goto(AaplSymbolPage.URL)
+        yield AaplSymbolPage(page)
+    finally:
+        _pages.pop(request.node.nodeid, None)

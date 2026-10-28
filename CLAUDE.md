@@ -8,9 +8,10 @@
 
 ```
 pages/
-  base_page.py            # BasePage: _expect_visible / _expect_text / _expect_contains_text / _expect_page_title
+  base_page.py            # BasePage: _expect_visible / _expect_text / _expect_contains_text / _expect_url / _expect_page_title
+  symbol_base_page.py     # SymbolBasePage(BasePage): TABS, tab_link(), go_to_tab(), assert_all_tabs_visible()
   <ticker>/
-    <ticker>_page.py      # <Ticker>BasePage(BasePage): BASE_URL, _URL_PATTERN, _assert_url()
+    <ticker>_page.py      # <Ticker>BasePage(SymbolBasePage): BASE_URL, _URL_PATTERN, symbol_heading
     symbol_page.py        # вкладка Overview
     statement_page.py / statistics_page.py / dividends_page.py / documents_page.py
 tests/
@@ -114,17 +115,19 @@ if checkout.is_visible():
 
 ## Жёсткие правила проекта (сверх 10 выше)
 
-1. **Проверки в Page Object — только через `self._expect_*`**. Голый `expect(...)` в POM — запрещён. В тестах голый `expect()` допустим для простых smoke (как в `tests/nvda/test_overview.py`).
+1. **Проверки в Page Object — только через `self._expect_*`** (`_expect_visible`, `_expect_text`, `_expect_contains_text`, `_expect_url`, `_expect_page_title`). Голый `expect(...)` в POM — запрещён. В тестах голый `expect()` допустим для простых smoke (как в `tests/nvda/test_overview.py`).
 2. **Локаторы — только `@property` внутри Page Object**. В тестовых файлах локаторов быть не должно.
 3. **Allure разметка:**
    - `@allure.step("...")` на каждом публичном методе POM
    - `with allure.step("..."):` для подшагов внутри метода
    - `@allure.feature(...)` на тестовом классе, `@allure.title(...)` на тестовом методе
-4. **Новый тикер = новый базовый класс:** `pages/<ticker>/<ticker>_page.py` с `<Ticker>BasePage(BasePage)`, `BASE_URL`, `_URL_PATTERN`, `_assert_url()`.
+4. **Новый тикер = новый базовый класс:** `pages/<ticker>/<ticker>_page.py` с `<Ticker>BasePage(SymbolBasePage)`, атрибутами `BASE_URL`, `URL`, `_URL_PATTERN` и `symbol_heading`. `TABS`, `tab_link()`, `go_to_tab()`, `assert_all_tabs_visible()` — наследуются от `SymbolBasePage`. Для проверки URL — `self._expect_url(self._URL_PATTERN, description="...")`, не самодельный `_assert_url()`.
 5. **Фикстура тикера:** в `tests/<ticker>/conftest.py` обязательно `_pages[request.node.nodeid] = page` и `_pages.pop(...)` после yield — иначе screenshot-on-failure не сработает.
 6. **Язык:** `@allure.step`, `description=`, `AssertionError` — на русском. Код, имена классов и методов — на английском.
 7. **URL-паттерны** — через `re.compile`, фрагмент пути без `^`/`$`, кроме случаев точного соответствия.
-8. **Не трогать без явной просьбы:** `pages/base_page.py`, `pages/nvda/**`, `pages/search/**`, `tests/nvda/**`, `screenshot_store.py`, `pytest.ini`, `requirements.txt`, корневой `conftest.py`.
+8. **Эталоны стиля** (править только при расширении общей функциональности, не ad-hoc правки под один тикер): `pages/base_page.py`, `pages/symbol_base_page.py`, `pages/nvda/**`, `pages/search/**`, `tests/nvda/**`. Если новый тикер требует правки общего кода — это сигнал расширить `BasePage`/`SymbolBasePage`, а не копировать логику в `<ticker>_page.py`.
+
+   **Не трогать совсем:** `screenshot_store.py`, `pytest.ini`, `requirements.txt`, корневой `conftest.py`.
 9. **Запрещены:**
    - `async`-API Playwright (только sync)
    - `time.sleep(...)` и `page.wait_for_timeout(...)` в прикладном коде

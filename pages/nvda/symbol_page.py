@@ -1,11 +1,11 @@
 import allure
-from playwright.sync_api import Locator, expect
+from playwright.sync_api import Locator
 from pages.nvda.nvda_page import NvdaBasePage
 
 
 class NvdaSymbolPage(NvdaBasePage):
     URL = NvdaBasePage.BASE_URL
-    _URL_PATTERN = r"/nasdaq/nvda(?:/overview)?$"
+    _URL_PATTERN = r"/nasdaq/nvda(?:/overview)?/?(?:\?.*)?$"
 
     # Locators
 
@@ -26,8 +26,7 @@ class NvdaSymbolPage(NvdaBasePage):
     @allure.step("Проверяем страницу Overview NVDA")
     def should_be_opened(self) -> None:
         with allure.step("URL содержит /nasdaq/nvda"):
-            if msg := self._assert_url():
-                raise AssertionError(msg)
+            self._expect_url(self._URL_PATTERN, description="/nasdaq/nvda")
         with allure.step("Заголовок с тикером NVDA виден"):
             self._expect_visible(
                 self.symbol_heading,

@@ -30,8 +30,7 @@ class NvdaStatisticsPage(NvdaBasePage):
     @allure.step("Проверяем страницу Statistics NVDA")
     def should_be_opened(self) -> None:
         with allure.step("URL содержит /nasdaq/nvda/statistics"):
-            if msg := self._assert_url():
-                raise AssertionError(msg)
+            self._expect_url(self._URL_PATTERN, description="/nasdaq/nvda/statistics")
         with allure.step("Таблица с мультипликаторами видна"):
             self._expect_visible(
                 self.stats_table,

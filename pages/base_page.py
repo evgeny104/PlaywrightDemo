@@ -1,3 +1,5 @@
+import re
+
 import allure
 from playwright.sync_api import Page, Locator, expect
 
@@ -56,6 +58,27 @@ class BasePage:
             )
             raise AssertionError(
                 f"«{description}» не содержит «{expected}»; получено: «{actual}»"
+            ) from None
+
+    def _expect_url(self, pattern, description: str) -> None:
+        """Проверяет URL страницы; при падении показывает ожидаемый паттерн vs фактический URL."""
+        if isinstance(pattern, str):
+            pattern = re.compile(pattern)
+        try:
+            expect(self.page).to_have_url(pattern)
+        except AssertionError:
+            try:
+                actual = self.page.url
+            except Exception:
+                actual = "не удалось получить URL"
+            allure.attach(
+                f"Ожидалось:  URL содержит «{description}»\n"
+                f"Фактически: «{actual}»",
+                name="Expected vs Actual",
+                attachment_type=allure.attachment_type.TEXT,
+            )
+            raise AssertionError(
+                f"URL страницы не содержит «{description}»; получено: «{actual}»"
             ) from None
 
     def _expect_page_title(self, pattern, description: str) -> None:

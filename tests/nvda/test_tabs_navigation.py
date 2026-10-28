@@ -11,7 +11,7 @@ import allure
 from playwright.sync_api import expect
 from pages.nvda.symbol_page import NvdaSymbolPage
 from pages.nvda.documents_page import NvdaDocumentsPage
-from pages.nvda.nvda_page import TABS
+from pages.symbol_base_page import TABS
 
 TABS_URL = [
     ("Overview",   r"/nasdaq/nvda(?:/overview)?$"),

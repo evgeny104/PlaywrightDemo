@@ -35,8 +35,7 @@ class NvdaDividendsPage(NvdaBasePage):
     @allure.step("Проверяем страницу Dividends NVDA")
     def should_be_opened(self) -> None:
         with allure.step("URL содержит /nasdaq/nvda/dividends"):
-            if msg := self._assert_url():
-                raise AssertionError(msg)
+            self._expect_url(self._URL_PATTERN, description="/nasdaq/nvda/dividends")
         with allure.step("Таблица с данными дивидендов видна"):
             self._expect_visible(
                 self.dividends_section,

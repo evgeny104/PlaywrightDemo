@@ -26,8 +26,7 @@ class NvdaDocumentsPage(NvdaBasePage):
     @allure.step("Проверяем страницу Documents NVDA")
     def should_be_opened(self) -> None:
         with allure.step("URL содержит /nasdaq/nvda/documents"):
-            if msg := self._assert_url():
-                raise AssertionError(msg)
+            self._expect_url(self._URL_PATTERN, description="/nasdaq/nvda/documents")
         with allure.step("Раздел документов виден на странице"):
             self._expect_visible(
                 self.documents_section,

@@ -9,46 +9,40 @@ from pages.nvda.symbol_page import NvdaSymbolPage
 from screenshot_store import _pages
 
 
+def _open_page(page: Page, request, page_object_cls, step_title: str):
+    """Общая механика: регистрация страницы для screenshot-хука + goto под allure.step.
+
+    Утечка _pages невозможна даже при падении goto — pop выполняется в finally.
+    """
+    _pages[request.node.nodeid] = page
+    try:
+        with allure.step(step_title):
+            page.goto(page_object_cls.URL)
+        yield page_object_cls(page)
+    finally:
+        _pages.pop(request.node.nodeid, None)
+
+
 @pytest.fixture
 def nvda_overview(page: Page, request) -> NvdaSymbolPage:
-    _pages[request.node.nodeid] = page
-    with allure.step("Открываем вкладку Overview NVDA"):
-        page.goto(NvdaSymbolPage.URL)
-    yield NvdaSymbolPage(page)
-    _pages.pop(request.node.nodeid, None)
+    yield from _open_page(page, request, NvdaSymbolPage, "Открываем вкладку Overview NVDA")
 
 
 @pytest.fixture
 def nvda_statement(page: Page, request) -> NvdaStatementPage:
-    _pages[request.node.nodeid] = page
-    with allure.step("Открываем страницу Statement NVDA"):
-        page.goto(NvdaStatementPage.URL)
-    yield NvdaStatementPage(page)
-    _pages.pop(request.node.nodeid, None)
+    yield from _open_page(page, request, NvdaStatementPage, "Открываем страницу Statement NVDA")
 
 
 @pytest.fixture
 def nvda_statistics(page: Page, request) -> NvdaStatisticsPage:
-    _pages[request.node.nodeid] = page
-    with allure.step("Открываем вкладку Statistics NVDA"):
-        page.goto(NvdaStatisticsPage.URL)
-    yield NvdaStatisticsPage(page)
-    _pages.pop(request.node.nodeid, None)
+    yield from _open_page(page, request, NvdaStatisticsPage, "Открываем вкладку Statistics NVDA")
 
 
 @pytest.fixture
 def nvda_dividends(page: Page, request) -> NvdaDividendsPage:
-    _pages[request.node.nodeid] = page
-    with allure.step("Открываем вкладку Dividends NVDA"):
-        page.goto(NvdaDividendsPage.URL)
-    yield NvdaDividendsPage(page)
-    _pages.pop(request.node.nodeid, None)
+    yield from _open_page(page, request, NvdaDividendsPage, "Открываем вкладку Dividends NVDA")
 
 
 @pytest.fixture
 def nvda_documents(page: Page, request) -> NvdaDocumentsPage:
-    _pages[request.node.nodeid] = page
-    with allure.step("Открываем вкладку Documents NVDA"):
-        page.goto(NvdaDocumentsPage.URL)
-    yield NvdaDocumentsPage(page)
-    _pages.pop(request.node.nodeid, None)
+    yield from _open_page(page, request, NvdaDocumentsPage, "Открываем страницу Documents NVDA")
