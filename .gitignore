@@ -59,6 +59,9 @@ build/
 .claude/settings.local.json
 .claude/memory/
 
+# OpenAI Codex CLI — локальные автогенерированные копии агентов, не публикуем
+.codex/
+
 # Allure / coverage reports (generated)
 allure-results/
 allure-report/

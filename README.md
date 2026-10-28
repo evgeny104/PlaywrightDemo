@@ -60,6 +60,8 @@ tests/
 
 Проект демонстрирует работу с [Claude Code](https://claude.com/claude-code) по схеме **policy + two-agent pipeline**: правила в одном файле, два агента отвечают за код и ревью.
 
+Практическая инструкция по запуску и работе с агентами — в [`AGENTS.md`](./AGENTS.md).
+
 ```
                  CLAUDE.md
           (10 правил Playwright
